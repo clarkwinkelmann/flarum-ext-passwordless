@@ -22,7 +22,7 @@
             border-bottom: 1px solid #e8ecf3;
         }
 
-        .header a {
+        .header a, .header a:visited {
             color: {{ $settings->get('theme_primary_color') }};
             text-decoration: none;
         }
@@ -35,7 +35,8 @@
             font-weight: bold;
         }
 
-        .Button, .Button[href] { {{-- [href] necessary to override Gmail link color --}}
+        {{-- Must include a in the selector to be more specific than Gmail default style. The .Block rule is for clients that remove classes from links --}}
+        a.Button, .ButtonBlock a, .ButtonLock a:visited {
             display: block;
             width: 300px;
             max-width: 100%;
@@ -63,7 +64,9 @@
 <div class="content">
     <p>{{ $translator->trans('clarkwinkelmann-passwordless.mail.message', ['{domain}' => parse_url(app()->url(), PHP_URL_HOST)]) }}</p>
 
-    <a href="{{ $link }}" class="Button">{{ $translator->trans('clarkwinkelmann-passwordless.mail.link') }}</a>
+    <div class="ButtonBlock">
+        <a href="{{ $link }}" class="Button">{{ $translator->trans('clarkwinkelmann-passwordless.mail.link') }}</a>
+    </div>
 
     <p>{{ $translator->trans('clarkwinkelmann-passwordless.mail.expires', ['{minutes}' => $expireMinutes]) }}</p>
 
