@@ -35,7 +35,7 @@
             font-weight: bold;
         }
 
-        .Button {
+        .Button, .Button[href] { {{-- [href] necessary to override Gmail link color --}}
             display: block;
             width: 300px;
             max-width: 100%;
@@ -46,7 +46,7 @@
             border-radius: 4px;
             border: 0;
             color: #fff;
-            background: #4d698e;
+            background: {{ $settings->get('theme_primary_color') }};
             font-weight: bold;
             margin: 40px auto;
             padding: 8px 20px;
@@ -57,7 +57,7 @@
 <body>
 <div class="header">
     <div class="content">
-        <a href="{{ $baseUrl }}">{{ $settings->get('forum_title') }}</a>
+        <a href="{{ app()->url() }}">{{ $settings->get('forum_title') }}</a>
     </div>
 </div>
 <div class="content">
