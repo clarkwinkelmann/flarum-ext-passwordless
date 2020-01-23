@@ -47,9 +47,7 @@ class RequestTokenController implements RequestHandlerInterface
             $translator = app(Translator::class);
 
             throw new ValidationException([
-                'password' => [
-                    $translator->trans('clarkwinkelmann-passwordless.api.request-throttle-error'),
-                ],
+                'password' => $translator->trans('clarkwinkelmann-passwordless.api.request-throttle-error'),
             ]);
         }
 
