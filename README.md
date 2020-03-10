@@ -23,3 +23,4 @@ A random password is generated when the field is left empty.
 
 - [GitHub](https://github.com/clarkwinkelmann/flarum-ext-passwordless)
 - [Packagist](https://packagist.org/packages/clarkwinkelmann/flarum-ext-passwordless)
+- [Discuss](https://discuss.flarum.org/d/22606)
