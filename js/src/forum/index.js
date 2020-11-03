@@ -36,8 +36,19 @@ app.initializers.add('clarkwinkelmann-passwordless', () => {
             items.add('passwordless', m('p', app.translator.trans(translationPrefix + 'how-it-works')), -100);
         }
 
-        if (items.has('password') && !this.passwordlessSkip) {
-            items.remove('password');
+        if (!this.passwordlessSkip) {
+            if (items.has('password')) {
+                items.remove('password');
+            }
+
+            if (items.has('identification') && items.get('identification') && Array.isArray(items.get('identification').children)) {
+                items.get('identification').children.forEach(vdom => {
+                    if (vdom && vdom.attrs && vdom.attrs.name === 'identification') {
+                        vdom.attrs.placeholder = app.translator.trans(translationPrefix + 'email');
+                        vdom.attrs.type = 'email';
+                    }
+                });
+            }
         }
     });
 

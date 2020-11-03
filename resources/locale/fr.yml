@@ -3,6 +3,7 @@ clarkwinkelmann-passwordless:
         sign-up:
             how-it-works: Un lien de login vous sera envoyé par email
             link-sent: Un lien de login vous a été envoyé par email. Vérifiez votre boîte de réception. <a>Envoyer à nouveau</a>
+            email: Email
             login-with-password: Vous avez déjà un mot de passe ? <a>Connexion avec mot de passe</a>
             login-without-password: Votre compte n'a pas de mot de passe ? <a>Connexion via email</a>
 

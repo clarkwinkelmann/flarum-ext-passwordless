@@ -9,7 +9,8 @@ use Flarum\Http\UrlGenerator;
 use Flarum\Locale\Translator;
 use Flarum\Settings\SettingsRepositoryInterface;
 use Flarum\User\Exception\NotAuthenticatedException;
-use Flarum\User\UserRepository;
+use Flarum\User\User;
+use Illuminate\Contracts\Validation\Factory;
 use Illuminate\Mail\Mailer;
 use Illuminate\Mail\Message;
 use Illuminate\Support\Arr;
@@ -20,21 +21,25 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 class RequestTokenController implements RequestHandlerInterface
 {
-    protected $users;
+    protected $validatorFactory;
 
-    public function __construct(UserRepository $users)
+    public function __construct(Factory $validatorFactory)
     {
-        $this->users = $users;
+        $this->validatorFactory = $validatorFactory;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $body = $request->getParsedBody();
 
+        $this->validatorFactory->make(Arr::only($body, 'identification'), [
+            'identification' => 'required|email',
+        ])->validate();
+
         $identification = Arr::get($body, 'identification');
         $remember = (bool)Arr::get($body, 'remember');
 
-        $user = $this->users->findByIdentification($identification);
+        $user = User::query()->where('email', $identification)->first();
 
         if (!$user) {
             throw new NotAuthenticatedException();
