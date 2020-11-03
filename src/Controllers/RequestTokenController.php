@@ -13,10 +13,10 @@ use Flarum\User\UserRepository;
 use Illuminate\Mail\Mailer;
 use Illuminate\Mail\Message;
 use Illuminate\Support\Arr;
+use Laminas\Diactoros\Response\EmptyResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Zend\Diactoros\Response\EmptyResponse;
 
 class RequestTokenController implements RequestHandlerInterface
 {
@@ -40,7 +40,7 @@ class RequestTokenController implements RequestHandlerInterface
             throw new NotAuthenticatedException();
         }
 
-        if (Token::query()->where('user_id', $user->id)->where('created_at', '>', Carbon::now()->subSecond(30))->exists()) {
+        if (Token::query()->where('user_id', $user->id)->where('created_at', '>', Carbon::now()->subSeconds(30))->exists()) {
             /**
              * @var Translator $translator
              */

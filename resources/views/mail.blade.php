@@ -58,11 +58,11 @@
 <body>
 <div class="header">
     <div class="content">
-        <a href="{{ app()->url() }}">{{ $settings->get('forum_title') }}</a>
+        <a href="{{ $url->to('forum')->base() }}">{{ $settings->get('forum_title') }}</a>
     </div>
 </div>
 <div class="content">
-    <p>{{ $translator->trans('clarkwinkelmann-passwordless.mail.message', ['{domain}' => parse_url(app()->url(), PHP_URL_HOST)]) }}</p>
+    <p>{{ $translator->trans('clarkwinkelmann-passwordless.mail.message', ['{domain}' => parse_url($url->to('forum')->base(), PHP_URL_HOST)]) }}</p>
 
     <div class="ButtonBlock">
         <a href="{{ $link }}" class="Button">{{ $translator->trans('clarkwinkelmann-passwordless.mail.link') }}</a>

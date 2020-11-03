@@ -8,7 +8,7 @@ import SignUpModal from 'flarum/components/SignUpModal';
 const translationPrefix = 'clarkwinkelmann-passwordless.forum.sign-up.';
 
 app.initializers.add('clarkwinkelmann-passwordless', () => {
-    extend(LogInModal.prototype, 'init', function () {
+    extend(LogInModal.prototype, 'oninit', function () {
         this.passwordlessTokenSent = false;
         this.passwordlessSkip = !app.forum.attribute('passwordless.passwordlessLoginByDefault');
     });
@@ -72,7 +72,7 @@ app.initializers.add('clarkwinkelmann-passwordless', () => {
         app.request({
             method: 'POST',
             url: app.forum.attribute('apiUrl') + '/passwordless-request',
-            data: {
+            body: {
                 identification: this.identification(),
                 remember: this.remember(),
             },

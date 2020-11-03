@@ -3,7 +3,6 @@
 namespace ClarkWinkelmann\PasswordLess;
 
 use Flarum\Extend;
-use Flarum\Foundation\Application;
 use Illuminate\Contracts\Events\Dispatcher;
 
 return [
@@ -21,9 +20,10 @@ return [
 
     new Extend\Locales(__DIR__ . '/resources/locale'),
 
-    function (Application $app, Dispatcher $events) {
-        $app['view']->addNamespace('passwordless', __DIR__ . '/resources/views');
+    (new Extend\View())
+        ->namespace('passwordless', __DIR__ . '/resources/views'),
 
+    function (Dispatcher $events) {
         $events->subscribe(Listeners\CheckPassword::class);
         $events->subscribe(Listeners\DontRequirePasswordOnSignUp::class);
         $events->subscribe(Listeners\ForumAttributes::class);

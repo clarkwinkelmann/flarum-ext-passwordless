@@ -3,7 +3,7 @@
 namespace ClarkWinkelmann\PasswordLess\Controllers;
 
 use ClarkWinkelmann\PasswordLess\Token;
-use Flarum\Foundation\Application;
+use Flarum\Foundation\Config;
 use Flarum\Foundation\DispatchEventsTrait;
 use Flarum\Http\AccessToken;
 use Flarum\Http\Rememberer;
@@ -16,25 +16,25 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Session\Session;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Support\Arr;
+use Laminas\Diactoros\Response\HtmlResponse;
+use Laminas\Diactoros\Response\RedirectResponse;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Zend\Diactoros\Response\HtmlResponse;
-use Zend\Diactoros\Response\RedirectResponse;
 
 class LoginFromTokenController implements RequestHandlerInterface
 {
     use DispatchEventsTrait;
 
-    protected $app;
+    protected $config;
     protected $users;
     protected $authenticator;
     protected $rememberer;
 
-    public function __construct(Dispatcher $events, Application $app, UserRepository $users, SessionAuthenticator $authenticator, Rememberer $rememberer)
+    public function __construct(Dispatcher $events, Config $config, UserRepository $users, SessionAuthenticator $authenticator, Rememberer $rememberer)
     {
         $this->events = $events;
-        $this->app = $app;
+        $this->config = $config;
         $this->users = $users;
         $this->authenticator = $authenticator;
         $this->rememberer = $rememberer;
@@ -44,7 +44,7 @@ class LoginFromTokenController implements RequestHandlerInterface
     {
         $params = $request->getQueryParams();
 
-        $url = Arr::get($params, 'return', $this->app->url());
+        $url = Arr::get($params, 'return', $this->config->url());
         $response = new RedirectResponse($url);
 
         /**

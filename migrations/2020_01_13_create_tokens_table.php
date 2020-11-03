@@ -17,6 +17,6 @@ return [
         });
     },
     'down' => function (Builder $schema) {
-        $schema->drop('clarkwinkelmann_passwordless_tokens');
+        $schema->dropIfExists('clarkwinkelmann_passwordless_tokens');
     },
 ];

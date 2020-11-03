@@ -19,6 +19,16 @@ A random password is generated when the field is left empty.
 
     composer require clarkwinkelmann/flarum-ext-passwordless
 
+## Support
+
+This extension is under **active maintenance**.
+
+Bugfixes and compatibility updates will be published for free as time allows.
+
+You can [contact me](https://clarkwinkelmann.com/flarum) to sponsor additional features.
+
+Support is offered on a "best effort" basis through the Flarum community thread.
+
 ## Links
 
 - [GitHub](https://github.com/clarkwinkelmann/flarum-ext-passwordless)

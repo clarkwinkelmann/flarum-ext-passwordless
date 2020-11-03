@@ -20,8 +20,7 @@ export default class PasswordlessSettingsModal extends SettingsModal {
                     onchange: value => {
                         this.setting(settingsPrefix + 'passwordlessLoginByDefault')(value ? '1' : '0');
                     },
-                    children: app.translator.trans(translationPrefix + 'passwordless-login-by-default'),
-                }),
+                }, app.translator.trans(translationPrefix + 'passwordless-login-by-default')),
             ]),
             m('.Form-group', [
                 Switch.component({
@@ -29,8 +28,7 @@ export default class PasswordlessSettingsModal extends SettingsModal {
                     onchange: value => {
                         this.setting(settingsPrefix + 'hideSignUpPassword')(value ? '1' : '0');
                     },
-                    children: app.translator.trans(translationPrefix + 'hide-sign-up-password'),
-                }),
+                }, app.translator.trans(translationPrefix + 'hide-sign-up-password')),
             ]),
             m('.Form-group', [
                 m('label', app.translator.trans(translationPrefix + 'token-life')),
