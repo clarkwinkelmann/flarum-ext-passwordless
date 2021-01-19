@@ -1,5 +1,5 @@
 {
-    "name": "@clarkwinkelmann/flarum-ext-passwordless",
+    "name": "@clarkwinkelmann/passwordless",
     "version": "0.0.0",
     "private": true,
     "dependencies": {

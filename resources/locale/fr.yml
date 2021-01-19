@@ -9,7 +9,6 @@ clarkwinkelmann-passwordless:
 
     admin:
         settings:
-            title: Réglages du login sans mot de passe
             passwordless-login-by-default: Login sans mot de passe par défaut dans la fenêtre de login
             hide-sign-up-password: Cacher le champ mot de passe lors de l'inscription
             token-life: Durée de vie des tokens en minutes

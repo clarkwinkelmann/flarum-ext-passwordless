@@ -7,15 +7,20 @@
     "type": "flarum-extension",
     "license": "MIT",
     "require": {
-        "flarum/core": ">=0.1.0-beta.14 <0.1.0-beta.15"
+        "flarum/core": ">=0.1.0-beta.15 <0.1.0-beta.16"
     },
     "authors": [
         {
             "name": "Clark Winkelmann",
+            "homepage": "https://clarkwinkelmann.com/",
             "email": "clark.winkelmann@gmail.com",
             "role": "Developer"
         }
     ],
+    "support": {
+        "source": "https://github.com/clarkwinkelmann/flarum-ext-passwordless",
+        "forum": "https://discuss.flarum.org/d/22606"
+    },
     "autoload": {
         "psr-4": {
             "ClarkWinkelmann\\PasswordLess\\": "src/"
@@ -24,6 +29,7 @@
     "extra": {
         "flarum-extension": {
             "title": "Passwordless",
+            "category": "authentication",
             "icon": {
                 "name": "fas fa-envelope-open-text",
                 "backgroundColor": "#684ba6",

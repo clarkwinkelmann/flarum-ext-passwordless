@@ -6,16 +6,10 @@ use ClarkWinkelmann\PasswordLess\Token;
 use Flarum\Foundation\ValidationException;
 use Flarum\Locale\Translator;
 use Flarum\User\Event\CheckingPassword;
-use Illuminate\Contracts\Events\Dispatcher;
 
 class CheckPassword
 {
-    public function subscribe(Dispatcher $events)
-    {
-        $events->listen(CheckingPassword::class, [$this, 'checkPassword']);
-    }
-
-    public function checkPassword(CheckingPassword $event)
+    public function handle(CheckingPassword $event)
     {
         /**
          * @var Token $token

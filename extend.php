@@ -2,8 +2,12 @@
 
 namespace ClarkWinkelmann\PasswordLess;
 
+use Flarum\Api\Serializer\ForumSerializer;
 use Flarum\Extend;
-use Illuminate\Contracts\Events\Dispatcher;
+use Flarum\Settings\SettingsRepositoryInterface;
+use Flarum\User\Event\CheckingPassword;
+use Flarum\User\Event\Saving;
+use Flarum\User\UserValidator;
 
 return [
     (new Extend\Frontend('forum'))
@@ -23,9 +27,23 @@ return [
     (new Extend\View())
         ->namespace('passwordless', __DIR__ . '/resources/views'),
 
-    function (Dispatcher $events) {
-        $events->subscribe(Listeners\CheckPassword::class);
-        $events->subscribe(Listeners\DontRequirePasswordOnSignUp::class);
-        $events->subscribe(Listeners\ForumAttributes::class);
-    },
+    (new Extend\ApiSerializer(ForumSerializer::class))
+        ->mutate(function () {
+            /**
+             * @var SettingsRepositoryInterface $settings
+             */
+            $settings = app(SettingsRepositoryInterface::class);
+
+            return [
+                'passwordless.passwordlessLoginByDefault' => (bool)$settings->get('passwordless.passwordlessLoginByDefault', true),
+                'passwordless.hideSignUpPassword' => (bool)$settings->get('passwordless.hideSignUpPassword', true),
+            ];
+        }),
+
+    (new Extend\Event())
+        ->listen(CheckingPassword::class, Listeners\CheckPassword::class)
+        ->listen(Saving::class, Listeners\SaveUser::class),
+
+    (new Extend\Validator(UserValidator::class))
+        ->configure(MakePasswordOptional::class),
 ];

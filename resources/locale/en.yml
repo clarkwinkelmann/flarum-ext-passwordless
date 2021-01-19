@@ -9,7 +9,6 @@ clarkwinkelmann-passwordless:
 
     admin:
         settings:
-            title: Passwordless login settings
             passwordless-login-by-default: Passwordless login by default in the login modal
             hide-sign-up-password: Hide password field on signup
             token-life: Lifetime of the tokens in minutes
