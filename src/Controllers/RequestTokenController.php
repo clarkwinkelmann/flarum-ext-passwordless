@@ -22,10 +22,18 @@ use Psr\Http\Server\RequestHandlerInterface;
 class RequestTokenController implements RequestHandlerInterface
 {
     protected $validatorFactory;
+    protected $translator;
+    protected $settings;
+    protected $mailer;
+    protected $url;
 
-    public function __construct(Factory $validatorFactory)
+    public function __construct(Factory $validatorFactory, Translator $translator, SettingsRepositoryInterface $settings, Mailer $mailer, UrlGenerator $url)
     {
         $this->validatorFactory = $validatorFactory;
+        $this->translator = $translator;
+        $this->settings = $settings;
+        $this->mailer = $mailer;
+        $this->url = $url;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -46,49 +54,24 @@ class RequestTokenController implements RequestHandlerInterface
         }
 
         if (Token::query()->where('user_id', $user->id)->where('created_at', '>', Carbon::now()->subSeconds(30))->exists()) {
-            /**
-             * @var Translator $translator
-             */
-            $translator = app(Translator::class);
-
             throw new ValidationException([
-                'password' => $translator->trans('clarkwinkelmann-passwordless.api.request-throttle-error'),
+                'password' => $this->translator->trans('clarkwinkelmann-passwordless.api.request-throttle-error'),
             ]);
         }
 
-        /**
-         * @var SettingsRepositoryInterface $settings
-         */
-        $settings = app(SettingsRepositoryInterface::class);
-
-        $expireMinutes = $settings->get('passwordless.tokenLifeInMinutes') ?: 5;
+        $expireMinutes = $this->settings->get('passwordless.tokenLifeInMinutes') ?: 5;
 
         $token = Token::generate($user->id, $remember, $expireMinutes);
         $token->save();
 
-        /**
-         * @var Mailer $mailer
-         */
-        $mailer = app(Mailer::class);
-
-        /**
-         * @var UrlGenerator $url
-         */
-        $url = app(UrlGenerator::class);
-
-        $mailer->send('passwordless::mail', [
-            'link' => $url->to('forum')->route('clarkwinkelmann.passwordless') . '?user=' . $user->id . '&token=' . $token->token,
+        $this->mailer->send('passwordless::mail', [
+            'link' => $this->url->to('forum')->route('clarkwinkelmann.passwordless') . '?user=' . $user->id . '&token=' . $token->token,
             'token' => $token->token,
             'expireMinutes' => $expireMinutes,
-        ], function (Message $message) use ($user, $settings) {
-            /**
-             * @var Translator $translator
-             */
-            $translator = app(Translator::class);
-
+        ], function (Message $message) use ($user) {
             $message->to($user->email);
-            $message->subject($translator->trans('clarkwinkelmann-passwordless.mail.subject', [
-                '{title}' => $settings->get('forum_title'),
+            $message->subject($this->translator->trans('clarkwinkelmann-passwordless.mail.subject', [
+                '{title}' => $this->settings->get('forum_title'),
             ]));
         });
 

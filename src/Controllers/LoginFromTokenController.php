@@ -5,8 +5,9 @@ namespace ClarkWinkelmann\PasswordLess\Controllers;
 use ClarkWinkelmann\PasswordLess\Token;
 use Flarum\Foundation\Config;
 use Flarum\Foundation\DispatchEventsTrait;
-use Flarum\Http\AccessToken;
+use Flarum\Http\RememberAccessToken;
 use Flarum\Http\Rememberer;
+use Flarum\Http\SessionAccessToken;
 use Flarum\Http\SessionAuthenticator;
 use Flarum\Locale\Translator;
 use Flarum\User\Event\LoggedIn;
@@ -30,14 +31,18 @@ class LoginFromTokenController implements RequestHandlerInterface
     protected $users;
     protected $authenticator;
     protected $rememberer;
+    protected $viewFactory;
+    protected $translator;
 
-    public function __construct(Dispatcher $events, Config $config, UserRepository $users, SessionAuthenticator $authenticator, Rememberer $rememberer)
+    public function __construct(Dispatcher $events, Config $config, UserRepository $users, SessionAuthenticator $authenticator, Rememberer $rememberer, Factory $viewFactory, Translator $translator)
     {
         $this->events = $events;
         $this->config = $config;
         $this->users = $users;
         $this->authenticator = $authenticator;
         $this->rememberer = $rememberer;
+        $this->viewFactory = $viewFactory;
+        $this->translator = $translator;
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
@@ -66,33 +71,23 @@ class LoginFromTokenController implements RequestHandlerInterface
         $passwordlessToken = Token::query()->where('user_id', $userId)->where('token', $passwordlessTokenValue)->first();
 
         if (!$passwordlessToken || $passwordlessToken->isExpired()) {
-            /**
-             * @var Factory $viewFactory
-             */
-            $viewFactory = app(Factory::class);
-
-            /**
-             * @var Translator $translator
-             */
-            $translator = app(Translator::class);
-
             // Show the Flarum error view, but with our custom message
-            $view = $viewFactory->make('flarum.forum::error.not_found')
-                ->with('message', $translator->trans('clarkwinkelmann-passwordless.api.' . ($passwordlessToken ? 'expired' : 'invalid') . '-token-error'));
+            $view = $this->viewFactory->make('flarum.forum::error.not_found')
+                ->with('message', $this->translator->trans('clarkwinkelmann-passwordless.api.' . ($passwordlessToken ? 'expired' : 'invalid') . '-token-error'));
 
             return new HtmlResponse($view->render(), 404);
         }
 
         Token::deleteOldTokens();
 
+        $accessToken = $passwordlessToken->remember ? RememberAccessToken::generate($passwordlessToken->user_id) : SessionAccessToken::generate($passwordlessToken->user_id);
+
         /**
          * @var Session $session
          */
         $session = $request->getAttribute('session');
 
-        $this->authenticator->logIn($session, $passwordlessToken->user_id);
-
-        $accessToken = AccessToken::generate($passwordlessToken->user_id);
+        $this->authenticator->logIn($session, $accessToken);
 
         $user = $this->users->findOrFail($accessToken->user_id);
 
@@ -103,9 +98,9 @@ class LoginFromTokenController implements RequestHandlerInterface
         $user->save();
         $this->dispatchEventsFor($user);
 
-        event(new LoggedIn($user, $accessToken));
+        $this->events->dispatch(new LoggedIn($user, $accessToken));
 
-        if ($passwordlessToken->remember) {
+        if ($accessToken instanceof RememberAccessToken) {
             $response = $this->rememberer->remember($response, $accessToken);
         }
 
