@@ -1,7 +1,7 @@
-import {extend, override} from 'flarum/extend';
-import app from 'flarum/app';
-import LogInModal from 'flarum/components/LogInModal';
-import SignUpModal from 'flarum/components/SignUpModal';
+import {extend, override} from 'flarum/common/extend';
+import app from 'flarum/forum/app';
+import LogInModal from 'flarum/forum/components/LogInModal';
+import SignUpModal from 'flarum/forum/components/SignUpModal';
 
 /* global m */
 

@@ -1,5 +1,5 @@
-import app from 'flarum/app';
-import Switch from 'flarum/components/Switch';
+import app from 'flarum/admin/app';
+import Switch from 'flarum/common/components/Switch';
 
 /* global m */
 

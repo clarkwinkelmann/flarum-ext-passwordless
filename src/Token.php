@@ -41,7 +41,7 @@ class Token extends AbstractModel
         static::query()->where('expires_at', '<', Carbon::now()->subMinutes($lifetime)->subDay())->delete();
     }
 
-    public function isExpired()
+    public function isExpired(): bool
     {
         return $this->expires_at->lt(Carbon::now());
     }

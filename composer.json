@@ -7,7 +7,7 @@
     "type": "flarum-extension",
     "license": "MIT",
     "require": {
-        "flarum/core": ">=0.1.0-beta.16 <0.1.0-beta.17"
+        "flarum/core": "^1.0"
     },
     "authors": [
         {
@@ -29,7 +29,7 @@
     "extra": {
         "flarum-extension": {
             "title": "Passwordless",
-            "category": "authentication",
+            "category": "feature",
             "icon": {
                 "name": "fas fa-envelope-open-text",
                 "backgroundColor": "#684ba6",
