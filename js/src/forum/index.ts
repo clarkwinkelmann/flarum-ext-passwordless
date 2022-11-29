@@ -1,9 +1,8 @@
 import {extend, override} from 'flarum/common/extend';
 import app from 'flarum/forum/app';
+import ItemList from 'flarum/common/utils/ItemList';
 import LogInModal from 'flarum/forum/components/LogInModal';
 import SignUpModal from 'flarum/forum/components/SignUpModal';
-
-/* global m */
 
 const translationPrefix = 'clarkwinkelmann-passwordless.forum.sign-up.';
 
@@ -13,7 +12,7 @@ app.initializers.add('clarkwinkelmann-passwordless', () => {
         this.passwordlessSkip = !app.forum.attribute('passwordless.passwordlessLoginByDefault');
     });
 
-    extend(LogInModal.prototype, 'fields', function (items) {
+    extend(LogInModal.prototype, 'fields', function (items: ItemList<any>) {
         if (this.passwordlessTokenSent) {
             items.add('passwordless', m('p', app.translator.trans(translationPrefix + 'link-sent', {
                 a: m('a', {
@@ -42,7 +41,7 @@ app.initializers.add('clarkwinkelmann-passwordless', () => {
             }
 
             if (items.has('identification') && items.get('identification') && Array.isArray(items.get('identification').children)) {
-                items.get('identification').children.forEach(vdom => {
+                items.get('identification').children.forEach((vdom: any) => {
                     if (vdom && vdom.attrs && vdom.attrs.name === 'identification') {
                         vdom.attrs.placeholder = app.translator.trans(translationPrefix + 'email');
                         vdom.attrs.type = 'email';
@@ -52,7 +51,7 @@ app.initializers.add('clarkwinkelmann-passwordless', () => {
         }
     });
 
-    extend(LogInModal.prototype, 'footer', function (vdom) {
+    extend(LogInModal.prototype, 'footer', function (vdom: any[]) {
         // Remove forgot password link
         if (
             !this.passwordlessSkip &&
@@ -75,7 +74,7 @@ app.initializers.add('clarkwinkelmann-passwordless', () => {
         })));
     });
 
-    LogInModal.prototype.requestPasswordlessToken = function (event) {
+    LogInModal.prototype.requestPasswordlessToken = function (this: LogInModal, event: Event) {
         event.preventDefault();
 
         this.loading = true;
