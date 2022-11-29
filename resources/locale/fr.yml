@@ -6,6 +6,7 @@ clarkwinkelmann-passwordless:
             email: Email
             login-with-password: Vous avez déjà un mot de passe ? <a>Connexion avec mot de passe</a>
             login-without-password: Votre compte n'a pas de mot de passe ? <a>Connexion via email</a>
+            error-try-signup: => core.forum.log_in.sign_up_text
 
     admin:
         settings:

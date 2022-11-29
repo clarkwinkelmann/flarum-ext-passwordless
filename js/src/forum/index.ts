@@ -1,5 +1,6 @@
 import {extend, override} from 'flarum/common/extend';
 import app from 'flarum/forum/app';
+import Button from 'flarum/common/components/Button';
 import ItemList from 'flarum/common/utils/ItemList';
 import LogInModal from 'flarum/forum/components/LogInModal';
 import SignUpModal from 'flarum/forum/components/SignUpModal';
@@ -92,6 +93,22 @@ app.initializers.add('clarkwinkelmann-passwordless', () => {
             this.loaded();
         }, this.loaded.bind(this));
     };
+
+    override(LogInModal.prototype, 'onerror', function (original, error) {
+        // Unless you have some other extensions throwing 401 errors, it's very likely that this means the account doesn't exist yet
+        // Therefore we will offer a quick access to the signup form from the error message
+        if (error.status === 401 && error.alert && !this.passwordlessSkip && app.forum.attribute('allowSignUp')) {
+            error.alert.controls = error.alert.controls || [];
+            error.alert.controls.unshift(app.translator.trans(translationPrefix + 'error-try-signup', {
+                a: Button.component({
+                    className: 'Button Button--link',
+                    onclick: this.signUp.bind(this),
+                }),
+            }));
+        }
+
+        return original(error);
+    });
 
     override(LogInModal.prototype, 'onsubmit', function (original, event) {
         if (this.passwordlessSkip) {
