@@ -49,7 +49,7 @@ class LoginFromTokenController implements RequestHandlerInterface
     {
         $params = $request->getQueryParams();
 
-        $url = Arr::get($params, 'return', $this->config->url());
+        $url = (string)Arr::get($params, 'return', $this->config->url());
         $response = new RedirectResponse($url);
 
         /**
@@ -62,8 +62,8 @@ class LoginFromTokenController implements RequestHandlerInterface
             return $response;
         }
 
-        $userId = Arr::get($params, 'user');
-        $passwordlessTokenValue = Arr::get($params, 'token');
+        $userId = (string)Arr::get($params, 'user');
+        $passwordlessTokenValue = (string)Arr::get($params, 'token');
 
         /**
          * @var Token $passwordlessToken

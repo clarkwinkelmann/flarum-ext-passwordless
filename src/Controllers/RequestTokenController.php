@@ -44,7 +44,7 @@ class RequestTokenController implements RequestHandlerInterface
             'identification' => 'required|email',
         ])->validate();
 
-        $identification = Arr::get($body, 'identification');
+        $identification = (string)Arr::get($body, 'identification');
         $remember = (bool)Arr::get($body, 'remember');
 
         $user = User::query()->where('email', $identification)->first();
