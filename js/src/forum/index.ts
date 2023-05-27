@@ -1,3 +1,4 @@
+import {Vnode} from 'mithril';
 import {extend, override} from 'flarum/common/extend';
 import app from 'flarum/forum/app';
 import Button from 'flarum/common/components/Button';
@@ -52,20 +53,32 @@ app.initializers.add('clarkwinkelmann-passwordless', () => {
         }
     });
 
-    extend(LogInModal.prototype, 'footer', function (vdom: any[]) {
+    // Flarum 1.7 and lower returned an array of nodes. Flarum 1.8 and above returns an anonymous node
+    extend(LogInModal.prototype, 'footer', function (vdom: Vnode | Vnode[]) {
+        if (!vdom) {
+            return;
+        }
+
+        const children = Array.isArray(vdom) ? vdom : vdom.children;
+
+        // Graceful fail if we can't find the children list
+        if (!Array.isArray(children)) {
+            console.warn('[passwordless] skipped LogInModal.footer');
+            return;
+        }
+
         // Remove forgot password link
         if (
             !this.passwordlessSkip &&
-            Array.isArray(vdom) &&
-            vdom.length &&
-            vdom[0] &&
-            vdom[0].attrs &&
-            vdom[0].attrs.className === 'LogInModal-forgotPassword'
+            children.length &&
+            children[0] &&
+            children[0].attrs &&
+            children[0].attrs.className === 'LogInModal-forgotPassword'
         ) {
-            vdom.splice(0, 1);
+            children.splice(0, 1);
         }
 
-        vdom.push(m('p', app.translator.trans(translationPrefix + (this.passwordlessSkip ? 'login-without-password' : 'login-with-password'), {
+        children.push(m('p', app.translator.trans(translationPrefix + (this.passwordlessSkip ? 'login-without-password' : 'login-with-password'), {
             a: m('a', {
                 onclick: () => {
                     this.passwordlessSkip = !this.passwordlessSkip;
