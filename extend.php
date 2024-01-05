@@ -9,9 +9,11 @@ use Flarum\User\UserValidator;
 
 return [
     (new Extend\Frontend('forum'))
+        ->css(__DIR__ . '/resources/less/common.less')
         ->js(__DIR__ . '/js/dist/forum.js'),
 
     (new Extend\Frontend('admin'))
+        ->css(__DIR__ . '/resources/less/common.less')
         ->js(__DIR__ . '/js/dist/admin.js'),
 
     (new Extend\Routes('forum'))

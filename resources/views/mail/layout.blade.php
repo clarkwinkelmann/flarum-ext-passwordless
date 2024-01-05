@@ -53,6 +53,14 @@
             padding: 8px 20px;
             text-decoration: none;
         }
+
+        .password {
+            display: inline-block;
+            border: 2px solid #dedede;
+            padding: 10px;
+            font-size: 2em;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -62,15 +70,7 @@
     </div>
 </div>
 <div class="content">
-    <p>{{ $translator->trans('clarkwinkelmann-passwordless.mail.message', ['{domain}' => parse_url($url->to('forum')->base(), PHP_URL_HOST)]) }}</p>
-
-    <div class="ButtonBlock">
-        <a href="{{ $link }}" class="Button">{{ $translator->trans('clarkwinkelmann-passwordless.mail.link') }}</a>
-    </div>
-
-    <p>{{ $translator->trans('clarkwinkelmann-passwordless.mail.expires', ['{minutes}' => $expireMinutes]) }}</p>
-
-    <p>{{ $translator->trans('clarkwinkelmann-passwordless.mail.alternative', ['{token}' => $token]) }}</p>
+    @yield('content')
 </div>
 <div class="footer">
     <div class="content">

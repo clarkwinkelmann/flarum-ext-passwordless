@@ -5,6 +5,7 @@ namespace ClarkWinkelmann\PasswordLess\Controllers;
 use Carbon\Carbon;
 use ClarkWinkelmann\PasswordLess\Token;
 use Flarum\Foundation\ValidationException;
+use Flarum\Http\RequestUtil;
 use Flarum\Http\UrlGenerator;
 use Flarum\Locale\Translator;
 use Flarum\Settings\SettingsRepositoryInterface;
@@ -39,18 +40,26 @@ class RequestTokenController implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $body = $request->getParsedBody();
+        $oneTimeToken = !!Arr::get($body, 'oneTimeToken');
 
-        $this->validatorFactory->make(Arr::only($body, 'identification'), [
-            'identification' => 'required|email',
-        ])->validate();
+        if ($oneTimeToken) {
+            // One-time token is a feature only for users already logged in that require an additional code in the app
+            $user = RequestUtil::getActor($request);
+            $user->assertRegistered();
+            $remember = false;
+        } else {
+            $this->validatorFactory->make(Arr::only($body, 'identification'), [
+                'identification' => 'required|email',
+            ])->validate();
 
-        $identification = (string)Arr::get($body, 'identification');
-        $remember = (bool)Arr::get($body, 'remember');
+            $identification = (string)Arr::get($body, 'identification');
+            $remember = (bool)Arr::get($body, 'remember');
 
-        $user = User::query()->where('email', $identification)->first();
+            $user = User::query()->where('email', $identification)->first();
 
-        if (!$user) {
-            throw new NotAuthenticatedException();
+            if (!$user) {
+                throw new NotAuthenticatedException();
+            }
         }
 
         if (Token::query()->where('user_id', $user->id)->where('created_at', '>', Carbon::now()->subSeconds(30))->exists()) {
@@ -64,13 +73,13 @@ class RequestTokenController implements RequestHandlerInterface
         $token = Token::generate($user->id, $remember, $expireMinutes);
         $token->save();
 
-        $this->mailer->send('passwordless::mail', [
+        $this->mailer->send('passwordless::mail.' . ($oneTimeToken ? 'token' : 'login'), [
             'link' => $this->url->to('forum')->route('clarkwinkelmann.passwordless') . '?user=' . $user->id . '&token=' . $token->token,
             'token' => $token->token,
             'expireMinutes' => $expireMinutes,
-        ], function (Message $message) use ($user) {
+        ], function (Message $message) use ($user, $oneTimeToken) {
             $message->to($user->email);
-            $message->subject($this->translator->trans('clarkwinkelmann-passwordless.mail.subject', [
+            $message->subject($this->translator->trans('clarkwinkelmann-passwordless.mail.' . ($oneTimeToken ? 'token' : 'login') . '.subject', [
                 '{title}' => $this->settings->get('forum_title'),
             ]));
         });

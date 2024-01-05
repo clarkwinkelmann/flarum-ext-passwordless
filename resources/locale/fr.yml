@@ -7,6 +7,7 @@ clarkwinkelmann-passwordless:
             login-with-password: Vous avez déjà un mot de passe ? <a>Connexion avec mot de passe</a>
             login-without-password: Votre compte n'a pas de mot de passe ? <a>Connexion via email</a>
             error-try-signup: => core.forum.log_in.sign_up_text
+        email-change-note: Le mot de passe à usage unique sera envoyé à votre <strong>adresse de courriel actuelle</strong>. Après la sauvegarde, un second email sera envoyé à la nouvelle adresse de courriel avec les instructions pour terminer le transfert.
 
     admin:
         settings:
@@ -15,15 +16,25 @@ clarkwinkelmann-passwordless:
             token-life: Durée de vie des tokens en minutes
             mail-footer: Texte dans le pied de page des emails
 
+    lib:
+        token-request:
+            send: Votre compte n'a pas de mot de passe? <a>Cliquez pour recevoir un mot de passe à usage unique par email</a>.
+            sent: Mot de passe envoyé! <a>Pas reçu? Cliquez pour en envoyer un nouveau</a>.
+
     api:
         request-throttle-error: Veuillez patienter quelques secondes avant de demander un nouveau lien
-        expired-token-error: Ce lien de login a expiré
-        invalid-token-error: Ce lien de login est invalide
+        expired-token-error: Ce lien de login ou mot de passe unique a expiré
+        invalid-token-error: Ce lien de login ou mot de passe unique est invalide
 
     mail:
-        subject: Votre lien de login pour {title}
-        message: Vous recevez ce message car vous avez demandé un lien de login pour votre compte sur {domain}.
-        link: Cliquez ici pour vous connecter
-        expires: Le lien expirera dans {minutes} minutes.
-        alternative: 'Vous pouvez également saisir ce mot de passe à usage unique durant le login: {token}.'
+        login:
+            subject: Votre lien de login pour {title}
+            message: Vous recevez ce message car vous avez demandé un lien de login pour votre compte sur {domain}.
+            link: Cliquez ici pour vous connecter
+            expires: Le lien expirera dans {minutes} minutes.
+            alternative: 'Vous pouvez également saisir ce mot de passe à usage unique durant le login: {token}.'
+        token:
+            subject: Votre mot de passe à usage unique pour {title}
+            message: Voici le mot de passe à usage unique que vous avez demandé pour votre compte sur {domain}.
+            expires: Ce mot de passe peut être utilisé une seule fois et expirera dans {minutes} minutes.
         footer: Envoyé par {title}

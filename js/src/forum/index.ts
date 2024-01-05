@@ -5,6 +5,10 @@ import Button from 'flarum/common/components/Button';
 import ItemList from 'flarum/common/utils/ItemList';
 import LogInModal from 'flarum/forum/components/LogInModal';
 import SignUpModal from 'flarum/forum/components/SignUpModal';
+import ChangeEmailModal from 'flarum/forum/components/ChangeEmailModal';
+import TokenRequest from '../common/TokenRequest';
+
+export {TokenRequest};
 
 const translationPrefix = 'clarkwinkelmann-passwordless.forum.sign-up.';
 
@@ -135,5 +139,29 @@ app.initializers.add('clarkwinkelmann-passwordless', () => {
         if (app.forum.attribute('passwordless.hideSignUpPassword') && items.has('password')) {
             items.remove('password');
         }
+    });
+
+    extend(ChangeEmailModal.prototype, 'fields', function (items) {
+        if (this.success) {
+            return;
+        }
+
+        // Items don't have a priority, so it's really annoying to place something in between
+        // Let's set our own priorities
+        if (items.has('email')) {
+            items.setPriority('email', 30);
+        }
+
+        if (items.has('password')) {
+            items.setPriority('password', 20);
+        }
+
+        items.add('passwordless-request', m(TokenRequest, {
+            errorHandler: this.onerror.bind(this),
+            onErrorClear: () => {
+                this.alertAttrs = null;
+            },
+            additionalText: app.translator.trans('clarkwinkelmann-passwordless.forum.email-change-note'),
+        }), 10);
     });
 });

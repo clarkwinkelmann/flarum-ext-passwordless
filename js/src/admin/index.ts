@@ -1,6 +1,9 @@
 import app from 'flarum/admin/app';
 import Switch from 'flarum/common/components/Switch';
 import ExtensionPage from 'flarum/admin/components/ExtensionPage';
+import TokenRequest from '../common/TokenRequest';
+
+export {TokenRequest};
 
 const settingsPrefix = 'passwordless.';
 const translationPrefix = 'clarkwinkelmann-passwordless.admin.settings.';
